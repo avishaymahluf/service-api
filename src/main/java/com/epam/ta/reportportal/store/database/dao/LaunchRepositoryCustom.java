@@ -22,12 +22,13 @@
 package com.epam.ta.reportportal.store.database.dao;
 
 import com.epam.ta.reportportal.store.commons.querygen.Filter;
-import com.epam.ta.reportportal.store.database.entity.launch.IssueStatistics;
+import com.epam.ta.reportportal.store.database.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.store.database.entity.launch.LaunchFull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Pavel Bortnik
@@ -38,8 +39,13 @@ public interface LaunchRepositoryCustom extends FilterableRepository<LaunchFull>
 
 	List<LaunchFull> fullLaunchWithStatistics();
 
-	List<IssueStatistics> countIssueStatistics(Long launchId);
-
 	Page<LaunchFull> findByFilter(Filter filter, Pageable pageable);
 
+	Page<LaunchFull> findLatest(Filter filter, Pageable pageable);
+
+	List<String> getLaunchNames(Long projectId, String value, LaunchModeEnum mode);
+
+	List<String> getOwnerNames(Long projectId, String value, String mode);
+
+	Map<String, String> getStatuses(Long projectId, Long[] ids);
 }
