@@ -22,6 +22,7 @@
 package com.epam.ta.reportportal.store.database.entity.launch;
 
 import com.epam.ta.reportportal.store.commons.querygen.FilterCriteria;
+import com.epam.ta.reportportal.store.database.entity.ExecutionStatistics;
 import com.epam.ta.reportportal.store.database.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.store.database.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.store.database.entity.enums.StatusEnum;
@@ -98,6 +99,10 @@ public class Launch implements Serializable {
 	@JoinColumn(name = "launch_id")
 	private Set<LaunchTag> tags = Sets.newHashSet();
 
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "execution_statistics")
+	private ExecutionStatistics executionStatistics;
+
 	public Set<LaunchTag> getTags() {
 		return tags;
 	}
@@ -124,6 +129,7 @@ public class Launch implements Serializable {
 	}
 
 	public Launch() {
+		executionStatistics = new ExecutionStatistics();
 	}
 
 	public Long getId() {
@@ -148,6 +154,14 @@ public class Launch implements Serializable {
 
 	public void setProjectId(Long projectId) {
 		this.projectId = projectId;
+	}
+
+	public ExecutionStatistics getExecutionStatistics() {
+		return executionStatistics;
+	}
+
+	public void setExecutionStatistics(ExecutionStatistics executionStatistics) {
+		this.executionStatistics = executionStatistics;
 	}
 
 	public Long getUserId() {

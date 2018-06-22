@@ -3,28 +3,17 @@
 */
 package com.epam.ta.reportportal.store.jooq.tables;
 
-
 import com.epam.ta.reportportal.store.jooq.Indexes;
 import com.epam.ta.reportportal.store.jooq.JPublic;
 import com.epam.ta.reportportal.store.jooq.Keys;
-import com.epam.ta.reportportal.store.jooq.enums.JIssueGroupEnum;
 import com.epam.ta.reportportal.store.jooq.tables.records.JIssueTypeRecord;
-
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.Identity;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
+
+import javax.annotation.Generated;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -40,7 +29,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JIssueType extends TableImpl<JIssueTypeRecord> {
 
-    private static final long serialVersionUID = 1341939673;
+	private static final long serialVersionUID = 425558670;
 
     /**
      * The reference instance of <code>public.issue_type</code>
@@ -61,9 +50,10 @@ public class JIssueType extends TableImpl<JIssueTypeRecord> {
     public final TableField<JIssueTypeRecord, Integer> ID = createField("id", org.jooq.impl.SQLDataType.INTEGER.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('issue_type_id_seq'::regclass)", org.jooq.impl.SQLDataType.INTEGER)), this, "");
 
     /**
-     * The column <code>public.issue_type.issue_group</code>.
-     */
-    public final TableField<JIssueTypeRecord, JIssueGroupEnum> ISSUE_GROUP = createField("issue_group", org.jooq.util.postgres.PostgresDataType.VARCHAR.asEnumDataType(com.epam.ta.reportportal.store.jooq.enums.JIssueGroupEnum.class), this, "");
+	 * The column <code>public.issue_type.issue_group_id</code>.
+	 */
+	public final TableField<JIssueTypeRecord, Short> ISSUE_GROUP_ID = createField(
+			"issue_group_id", org.jooq.impl.SQLDataType.SMALLINT, this, "");
 
     /**
      * The column <code>public.issue_type.locator</code>.
@@ -153,6 +143,14 @@ public class JIssueType extends TableImpl<JIssueTypeRecord> {
     public List<UniqueKey<JIssueTypeRecord>> getKeys() {
         return Arrays.<UniqueKey<JIssueTypeRecord>>asList(Keys.ISSUE_TYPE_PK);
     }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<ForeignKey<JIssueTypeRecord, ?>> getReferences() {
+		return Arrays.<ForeignKey<JIssueTypeRecord, ?>>asList(Keys.ISSUE_TYPE__ISSUE_TYPE_ISSUE_GROUP_ID_FKEY);
+	}
 
     /**
      * {@inheritDoc}

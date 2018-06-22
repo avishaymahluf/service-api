@@ -19,40 +19,65 @@
  * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.epam.ta.reportportal.store.database.entity.launch;
+package com.epam.ta.reportportal.store.database.entity;
 
-import com.epam.ta.reportportal.store.database.entity.enums.TestItemIssueType;
-
-import javax.persistence.Column;
+import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * @author Pavel Bortnik
  */
-public class IssueStatistics {
+@Entity
+@Table(name = "execution_statistics")
+public class ExecutionStatistics implements Serializable {
 
-	@Column(name = "issue_group")
-	private TestItemIssueType issueGroup;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
+	private Long id;
 
-	@Column(name = "locator")
-	private String locator;
+	@Column(name = "passed")
+	private int passed;
+
+	@Column(name = "failed")
+	private int failed;
+
+	@Column(name = "skipped")
+	private int skipped;
 
 	@Column(name = "total")
 	private int total;
 
-	public TestItemIssueType getIssueGroup() {
-		return issueGroup;
+	public Long getId() {
+		return id;
 	}
 
-	public void setIssueGroup(TestItemIssueType issueGroup) {
-		this.issueGroup = issueGroup;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	public String getLocator() {
-		return locator;
+	public int getPassed() {
+		return passed;
 	}
 
-	public void setLocator(String locator) {
-		this.locator = locator;
+	public void setPassed(int passed) {
+		this.passed = passed;
+	}
+
+	public int getFailed() {
+		return failed;
+	}
+
+	public void setFailed(int failed) {
+		this.failed = failed;
+	}
+
+	public int getSkipped() {
+		return skipped;
+	}
+
+	public void setSkipped(int skipped) {
+		this.skipped = skipped;
 	}
 
 	public int getTotal() {

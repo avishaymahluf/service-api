@@ -78,7 +78,7 @@ public enum FilterTarget {
 			)
 					.from(i)
 					.leftJoin(it).on(i.TYPE.eq(it.ID))
-					.leftJoin(p).on(i.PROJECT_ID.eq(p.ID))
+					//.leftJoin(p).on(i.PROJECT_ID.eq(p.ID))
 					.groupBy(i.ID, i.PROJECT_ID, i.TYPE, i.PARAMS, i.CREATION_DATE)
 					.getQuery();
 		}

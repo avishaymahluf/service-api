@@ -21,6 +21,7 @@
 
 package com.epam.ta.reportportal.store.database.entity.item;
 
+import com.epam.ta.reportportal.store.database.entity.ExecutionStatistics;
 import com.epam.ta.reportportal.store.database.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.store.database.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.store.database.entity.item.issue.IssueEntity;
@@ -60,12 +61,17 @@ public class TestItemResults implements Serializable {
 	@PrimaryKeyJoinColumn
 	private IssueEntity issue;
 
+	@OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "execution_statistics")
+	private ExecutionStatistics executionStatistics;
+
 	@OneToOne
 	@MapsId
 	@JoinColumn(name = "item_id")
 	private TestItem testItem;
 
 	public TestItemResults() {
+		executionStatistics = new ExecutionStatistics();
 	}
 
 	public Long getItemId() {
@@ -74,6 +80,14 @@ public class TestItemResults implements Serializable {
 
 	public void setItemId(Long itemId) {
 		this.itemId = itemId;
+	}
+
+	public ExecutionStatistics getExecutionStatistics() {
+		return executionStatistics;
+	}
+
+	public void setExecutionStatistics(ExecutionStatistics executionStatistics) {
+		this.executionStatistics = executionStatistics;
 	}
 
 	public StatusEnum getStatus() {

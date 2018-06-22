@@ -3,31 +3,20 @@
 */
 package com.epam.ta.reportportal.store.jooq.tables;
 
-
 import com.epam.ta.reportportal.store.jooq.Indexes;
 import com.epam.ta.reportportal.store.jooq.JPublic;
 import com.epam.ta.reportportal.store.jooq.Keys;
 import com.epam.ta.reportportal.store.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.store.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.store.jooq.tables.records.JLaunchRecord;
+import org.jooq.*;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
+import javax.annotation.Generated;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
 
 /**
@@ -43,7 +32,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLaunch extends TableImpl<JLaunchRecord> {
 
-    private static final long serialVersionUID = 1527536316;
+	private static final long serialVersionUID = -1601674871;
 
     /**
      * The reference instance of <code>public.launch</code>
@@ -118,6 +107,12 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
      */
     public final TableField<JLaunchRecord, JStatusEnum> STATUS = createField("status", org.jooq.util.postgres.PostgresDataType.VARCHAR.asEnumDataType(com.epam.ta.reportportal.store.jooq.enums.JStatusEnum.class), this, "");
 
+	/**
+	 * The column <code>public.launch.execution_statistics</code>.
+	 */
+	public final TableField<JLaunchRecord, Long> EXECUTION_STATISTICS = createField(
+			"execution_statistics", org.jooq.impl.SQLDataType.BIGINT, this, "");
+
     /**
      * Create a <code>public.launch</code> table reference
      */
@@ -160,8 +155,8 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.LAUNCH_PK, Indexes.UNQ_NAME_NUMBER);
-    }
+		return Arrays.<Index>asList(Indexes.LAUNCH_EXECUTION_STATISTICS_KEY, Indexes.LAUNCH_PK, Indexes.UNQ_NAME_NUMBER);
+	}
 
     /**
      * {@inheritDoc}
@@ -184,16 +179,17 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
      */
     @Override
     public List<UniqueKey<JLaunchRecord>> getKeys() {
-        return Arrays.<UniqueKey<JLaunchRecord>>asList(Keys.LAUNCH_PK, Keys.UNQ_NAME_NUMBER);
-    }
+		return Arrays.<UniqueKey<JLaunchRecord>>asList(Keys.LAUNCH_PK, Keys.UNQ_NAME_NUMBER, Keys.LAUNCH_EXECUTION_STATISTICS_KEY);
+	}
 
     /**
      * {@inheritDoc}
      */
     @Override
     public List<ForeignKey<JLaunchRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JLaunchRecord, ?>>asList(Keys.LAUNCH__LAUNCH_PROJECT_ID_FKEY, Keys.LAUNCH__LAUNCH_USER_ID_FKEY);
-    }
+		return Arrays.<ForeignKey<JLaunchRecord, ?>>asList(
+				Keys.LAUNCH__LAUNCH_PROJECT_ID_FKEY, Keys.LAUNCH__LAUNCH_USER_ID_FKEY, Keys.LAUNCH__EXECUTION_STATISTICS_FK);
+	}
 
     /**
      * {@inheritDoc}

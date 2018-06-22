@@ -207,8 +207,9 @@ public class LaunchController {
 	@ApiOperation("Get list of project launches by filter")
 	public Iterable<LaunchResource> getProjectLaunches(@PathVariable String projectName, @FilterFor(Launch.class) Filter filter,
 			@SortFor(Launch.class) Pageable pageable, @AuthenticationPrincipal ReportPortalUser user) {
-		return getLaunchMessageHandler.getProjectLaunches(ProjectUtils.extractProjectDetails(user, projectName),
-				filter, pageable, user.getUsername());
+		return getLaunchMessageHandler.getProjectLaunches(ProjectUtils.extractProjectDetails(user, projectName), filter, pageable,
+				user.getUsername()
+		);
 	}
 
 	@RequestMapping(value = "/latest", method = GET)
