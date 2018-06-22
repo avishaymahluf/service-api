@@ -26,6 +26,8 @@ import com.epam.ta.reportportal.store.database.entity.launch.Launch;
 import com.epam.ta.reportportal.store.database.entity.launch.LaunchTag;
 import com.epam.ta.reportportal.ws.model.launch.LaunchResource;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
+import com.epam.ta.reportportal.ws.model.statistics.ExecutionCounter;
+import com.epam.ta.reportportal.ws.model.statistics.Statistics;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
@@ -59,11 +61,18 @@ public final class LaunchConverter {
 		resource.setTags(getTags(db));
 		resource.setMode(Mode.valueOf(db.getMode().name()));
 		resource.setOwner(String.valueOf(db.getUserId()));
-		//resource.setStatistics(StatisticsConverter.TO_RESOURCE.apply(db.getStatistics()));
+
+		Statistics statistics = new Statistics();
+		ExecutionCounter executionCounter = new ExecutionCounter();
+		executionCounter.setTotal(String.valueOf(db.getExecutionStatistics().getTotal()));
+		executionCounter.setPassed(String.valueOf(db.getExecutionStatistics().getPassed()));
+		executionCounter.setSkipped(String.valueOf(db.getExecutionStatistics().getSkipped()));
+		executionCounter.setFailed(String.valueOf(db.getExecutionStatistics().getFailed()));
+		statistics.setExecutions(executionCounter);
+		resource.setStatistics(statistics);
 
 		return resource;
 	};
-
 
 	private static Set<String> getTags(Launch launch) {
 		return Optional.ofNullable(launch.getTags())

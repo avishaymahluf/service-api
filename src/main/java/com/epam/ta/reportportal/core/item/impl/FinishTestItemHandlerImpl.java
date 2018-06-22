@@ -25,12 +25,12 @@ import com.epam.ta.reportportal.core.item.FinishTestItemHandler;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.store.commons.EntityUtils;
 import com.epam.ta.reportportal.store.commons.Preconditions;
+import com.epam.ta.reportportal.store.database.dao.ExecutionStatisticsRepository;
 import com.epam.ta.reportportal.store.database.dao.LaunchRepository;
 import com.epam.ta.reportportal.store.database.dao.TestItemRepository;
 import com.epam.ta.reportportal.store.database.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.store.database.entity.item.TestItem;
 import com.epam.ta.reportportal.store.database.entity.item.TestItemResults;
-import com.epam.ta.reportportal.store.database.entity.item.TestItemStructure;
 import com.epam.ta.reportportal.store.database.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.store.database.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.store.database.entity.launch.Launch;
@@ -68,6 +68,8 @@ class FinishTestItemHandlerImpl implements FinishTestItemHandler {
 
 	private IssueTypeHandler issueTypeHandler;
 
+	private ExecutionStatisticsRepository executionStatisticsRepository;
+
 	//	private ExternalSystemRepository externalSystemRepository;
 
 	@Autowired
@@ -83,6 +85,11 @@ class FinishTestItemHandlerImpl implements FinishTestItemHandler {
 	@Autowired
 	public void setIssueTypeHandler(IssueTypeHandler issueTypeHandler) {
 		this.issueTypeHandler = issueTypeHandler;
+	}
+
+	@Autowired
+	public void setExecutionStatisticsRepository(ExecutionStatisticsRepository executionStatisticsRepository) {
+		this.executionStatisticsRepository = executionStatisticsRepository;
 	}
 
 	//	@Autowired
@@ -127,7 +134,7 @@ class FinishTestItemHandlerImpl implements FinishTestItemHandler {
 
 		if (actualStatus.isPresent() && !hasChildren) {
 			testItemResults.setStatus(actualStatus.get());
-			incrementExecutionStatistics(testItem, testItemResults.getStatus());
+			executionStatisticsRepository.updateExecutionStatistics(actualStatus.get(), testItem.getItemId(), true);
 		} else {
 			testItemResults.setStatus(testItemRepository.identifyStatus(testItem.getItemId()));
 		}
@@ -151,58 +158,6 @@ class FinishTestItemHandlerImpl implements FinishTestItemHandler {
 		}
 		testItemResults.setEndTime(EntityUtils.TO_LOCAL_DATE_TIME.apply(finishExecutionRQ.getEndTime()));
 		return testItemResults;
-	}
-
-	private void incrementExecutionStatistics(TestItem testItem, StatusEnum status) {
-		TestItemStructure parent;
-		switch (status) {
-			case PASSED:
-				testItem.getTestItemResults().getExecutionStatistics().setPassed(1);
-				parent = testItem.getTestItemStructure().getParent();
-				while (parent != null) {
-					parent.getTestItem()
-							.getTestItemResults()
-							.getExecutionStatistics()
-							.setPassed(parent.getTestItem().getTestItemResults().getExecutionStatistics().getPassed() + 1);
-					parent = parent.getTestItem().getTestItemStructure().getParent();
-				}
-				testItem.getLaunch().getExecutionStatistics().setSkipped(testItem.getLaunch().getExecutionStatistics().getSkipped() + 1);
-				break;
-			case SKIPPED:
-				testItem.getTestItemResults().getExecutionStatistics().setSkipped(1);
-				parent = testItem.getTestItemStructure().getParent();
-				while (parent != null) {
-					parent.getTestItem()
-							.getTestItemResults()
-							.getExecutionStatistics()
-							.setSkipped(parent.getTestItem().getTestItemResults().getExecutionStatistics().getSkipped() + 1);
-					parent = parent.getTestItem().getTestItemStructure().getParent();
-				}
-				testItem.getLaunch().getExecutionStatistics().setSkipped(testItem.getLaunch().getExecutionStatistics().getSkipped() + 1);
-				break;
-			default:
-				testItem.getTestItemResults().getExecutionStatistics().setFailed(1);
-				parent = testItem.getTestItemStructure().getParent();
-				while (parent != null) {
-					parent.getTestItem()
-							.getTestItemResults()
-							.getExecutionStatistics()
-							.setFailed(parent.getTestItem().getTestItemResults().getExecutionStatistics().getFailed() + 1);
-					parent = parent.getTestItem().getTestItemStructure().getParent();
-				}
-				testItem.getLaunch().getExecutionStatistics().setFailed(testItem.getLaunch().getExecutionStatistics().getFailed() + 1);
-		}
-
-		testItem.getTestItemResults().getExecutionStatistics().setTotal(1);
-		parent = testItem.getTestItemStructure().getParent();
-		while (parent != null) {
-			parent.getTestItem()
-					.getTestItemResults()
-					.getExecutionStatistics()
-					.setTotal(parent.getTestItem().getTestItemResults().getExecutionStatistics().getTotal() + 1);
-			parent = parent.getTestItem().getTestItemStructure().getParent();
-		}
-		testItem.getLaunch().getExecutionStatistics().setTotal(testItem.getLaunch().getExecutionStatistics().getTotal() + 1);
 	}
 
 	/**

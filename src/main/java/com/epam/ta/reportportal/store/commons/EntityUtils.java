@@ -50,8 +50,10 @@ public class EntityUtils {
 	};
 
 	public static final Function<LocalDateTime, Date> TO_DATE = localDateTime -> {
-		Preconditions.checkNotNull(localDateTime, "Provided value shouldn't be null");
-		return Date.from(localDateTime.atZone(ZoneOffset.UTC).toInstant());
+		if (null != localDateTime) {
+			return Date.from(localDateTime.atZone(ZoneOffset.UTC).toInstant());
+		}
+		return null;
 	};
 
 	/**
